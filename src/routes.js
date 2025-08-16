@@ -44,5 +44,30 @@ export const routes = [
         return res.writeHead(400).end(`The following fields are invalid: ${invalidFields.join(", ")}`)
       }
     }
+  },
+  {
+    method: "PUT",
+    path: buildRoutePath("/tasks/:id"),
+    handler: (req, res) => {
+      const { id } = req.params
+      const { title, description } = req.body
+
+      const isTitleValid = validateText(title)
+      const isDescriptionValid = validateText(description)
+
+
+      if (isTitleValid && isDescriptionValid) {
+        database.update('tasks', id, {
+          title,
+          description,
+        })
+        return res.writeHead(204).end();
+      } else {
+        const invalidFields = []
+        if (!isTitleValid) invalidFields.push("title")
+        if (!isDescriptionValid) invalidFields.push("description")
+        return res.writeHead(400).end(`The following fields are invalid: ${invalidFields.join(", ")}`)
+      }
+    }
   }
 ]
