@@ -54,6 +54,10 @@ export const routes = [
       const isTitleValid = validateText(title)
       const isDescriptionValid = validateText(description)
 
+      const [task] = database.select('tasks', { id })
+      if (!task) {
+        return res.writeHead(404).end("Task not found")
+      }
 
       if (isTitleValid && isDescriptionValid) {
         database.update('tasks', id, {
