@@ -59,6 +59,7 @@ export const routes = [
         database.update('tasks', id, {
           title,
           description,
+          updated_at: new Date().toISOString()
         })
         return res.writeHead(204).end();
       } else {
@@ -67,6 +68,20 @@ export const routes = [
         if (!isDescriptionValid) invalidFields.push("description")
         return res.writeHead(400).end(`The following fields are invalid: ${invalidFields.join(", ")}`)
       }
+    }
+  },
+  {
+    method: "PATCH",
+    path: buildRoutePath("/tasks/:id/complete"),
+    handler: (req, res) => {
+      const { id } = req.params
+      const currentDate = new Date().toISOString();
+      database.update('tasks', id, {
+        completed_at: currentDate,
+        updated_at: currentDate
+      })
+
+      return res.writeHead(204).end()
     }
   }
 ]
