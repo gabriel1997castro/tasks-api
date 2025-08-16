@@ -1,6 +1,7 @@
 import { Database } from "./database.js"
 import { buildRoutePath } from "./utils/build-route-path.js"
 import { randomUUID } from 'node:crypto';
+import { validateText } from "./utils/validate-text.js";
 
 const database = new Database()
 export const routes = [
@@ -22,16 +23,26 @@ export const routes = [
 
       const { title, description, } = req.body
 
-      database.insert('tasks', {
-        id: randomUUID(),
-        title,
-        description,
-        completed_at: null,
-        created_at: new Date().toISOString(),
-        updated_at: null
-      })
+      const isTitleValid = validateText(title)
+      const isDescriptionValid = validateText(description)
 
-      return res.writeHead(201).end();
+
+      if (isTitleValid && isDescriptionValid) {
+        database.insert('tasks', {
+          id: randomUUID(),
+          title,
+          description,
+          completed_at: null,
+          created_at: new Date().toISOString(),
+          updated_at: null
+        })
+        return res.writeHead(201).end();
+      } else {
+        const invalidFields = []
+        if (!isTitleValid) invalidFields.push("title")
+        if (!isDescriptionValid) invalidFields.push("description")
+        return res.writeHead(400).end(`The following fields are invalid: ${invalidFields.join(", ")}`)
+      }
     }
   }
 ]
