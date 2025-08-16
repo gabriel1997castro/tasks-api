@@ -55,7 +55,6 @@ export class Database {
 
   update(table, id, data) {
     const rowIndex = this.#database[table].findIndex(row => row.id === id)
-    console.log({ rowIndex, id })
 
     if (rowIndex > -1) {
       const currentData = this.#database[table][rowIndex]
